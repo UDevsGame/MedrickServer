@@ -8,16 +8,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f03310cc-01e1-4726-b37d-e1a7644ae29a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/MedrickGameServer/Network/Application/Model/ClientEvents.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MedrickGameServer/Network/Application/Model/ClientId.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MedrickGameServer/Network/Application/Model/MessageReceivedEvent.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MedrickGameServer/Network/Application/Model/NetworkMessage.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MedrickGameServer/Network/Application/NetworkEventHandler.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MedrickGameServer/Network/Application/Server/NetworkFactory.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MedrickGameServer/Network/Application/Server/NetworkServer.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MedrickGameServer/Network/Main/LiteNetLib/LiteNetLibFactory.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MedrickGameServer/Network/Main/LiteNetLib/LiteNetLibServer.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.medrick-game-server/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.medrick-game-server/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MedrickGameServer/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MedrickGameServer/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,7 +80,7 @@
       <option name="presentableId" value="Default" />
       <updated>1751122969085</updated>
       <workItem from="1751122970100" duration="2535000" />
-      <workItem from="1751125690918" duration="1288000" />
+      <workItem from="1751125690918" duration="2377000" />
     </task>
     <servers />
   </component>
