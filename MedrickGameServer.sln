@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "medrick-game-server", "medrick-game-server\medrick-game-server.csproj", "{CE76994E-2770-48AE-B207-4D3E1A380BB9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedrickGameServer", "MedrickGameServer\MedrickGameServer.csproj", "{CE76994E-2770-48AE-B207-4D3E1A380BB9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

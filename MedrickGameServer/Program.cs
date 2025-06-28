@@ -1,4 +1,4 @@
-﻿namespace medrick_game_server;
+﻿namespace MedrickGameServer;
 
 class Program
 {
