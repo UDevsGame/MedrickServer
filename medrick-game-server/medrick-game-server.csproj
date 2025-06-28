@@ -3,9 +3,10 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net8.0</TargetFramework>
-        <RootNamespace>medrick_game_server</RootNamespace>
+        <RootNamespace>MedrickGameServer</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <AssemblyName>MedrickGameServer</AssemblyName>
     </PropertyGroup>
 
 </Project>
