@@ -8,17 +8,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f03310cc-01e1-4726-b37d-e1a7644ae29a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.medrick-game-server/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.medrick-game-server/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.medrick-game-server/.idea/cody_history.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.medrick-game-server/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.medrick-game-server/.idea/indexLayout.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.medrick-game-server/.idea/material_theme_project_new.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.medrick-game-server/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/medrick-game-server.sln" beforeDir="false" afterPath="$PROJECT_DIR$/MedrickGameServer.sln" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/medrick-game-server/NetworkLayer/Network.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/medrick-game-server/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MedrickGameServer/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/medrick-game-server/medrick-game-server.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/MedrickGameServer/MedrickGameServer.csproj" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MedrickGameServer/Network/Application/Model/ClientEvents.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MedrickGameServer/Network/Application/Model/ClientId.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MedrickGameServer/Network/Application/Model/MessageReceivedEvent.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MedrickGameServer/Network/Application/Model/NetworkMessage.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MedrickGameServer/Network/Application/NetworkEventHandler.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MedrickGameServer/Network/Application/Server/NetworkFactory.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MedrickGameServer/Network/Application/Server/NetworkServer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MedrickGameServer/Network/Main/LiteNetLib/LiteNetLibFactory.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MedrickGameServer/Network/Main/LiteNetLib/LiteNetLibServer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.medrick-game-server/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.medrick-game-server/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,7 +28,9 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/MedrickGameServer/Program.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/3d47105f47a240929625d0f531812b9e1c000/5c/7cab4d7f/INetEventListener.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/3d47105f47a240929625d0f531812b9e1c000/6e/92bbfae1/DisconnectInfo.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/3d47105f47a240929625d0f531812b9e1c000/a4/f8cbae05/DisconnectReason.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
@@ -87,7 +88,7 @@
       <option name="presentableId" value="Default" />
       <updated>1751122969085</updated>
       <workItem from="1751122970100" duration="2535000" />
-      <workItem from="1751125690918" duration="92000" />
+      <workItem from="1751125690918" duration="1288000" />
     </task>
     <servers />
   </component>
