@@ -1,8 +1,6 @@
 ﻿using MedrickGameServer.Network.Application;
-using MedrickGameServer.Network.Main.LiteNetLib;
 
-namespace MedrickGameServer.NetworkLayer.Main;
-
+namespace MedrickGameServer.Network.Main.LiteNetLib;
 public class LiteNetLibFactory : NetworkFactory
 {
     public NetworkServer CreateServer()

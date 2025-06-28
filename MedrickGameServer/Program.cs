@@ -1,5 +1,5 @@
 ﻿using MedrickGameServer.Network.Application;
-using MedrickGameServer.NetworkLayer.Main;
+using MedrickGameServer.Network.Main.LiteNetLib;
 
 namespace MedrickGameServer;
 
