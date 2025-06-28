@@ -8,55 +8,56 @@ using System.Net.Sockets;
 
 public class LiteNetLibServer : NetworkServer, INetEventListener
 {
-    private NetManager _server;
-    private readonly ConcurrentDictionary<int, ClientId> _peerToClientMap;
-    private readonly ConcurrentDictionary<ClientId, NetPeer> _clientToPeerMap;
-    private readonly ConcurrentBag<NetworkEventHandler> _eventHandlers;
-    private bool _isRunning;
-    private readonly object _lockObject = new object();
+    private NetManager server;
+    private readonly ConcurrentDictionary<int, ClientId> peerToClientMap;
+    private readonly ConcurrentDictionary<ClientId, NetPeer> clientToPeerMap;
+    private readonly ConcurrentBag<NetworkEventHandler> eventHandlers;
+    private bool isRunning;
+    private readonly object lockObject = new object();
 
-    public bool IsRunning => _isRunning;
+    public bool IsRunning => isRunning;
 
     public IReadOnlySet<ClientId> ConnectedClients => 
-        _clientToPeerMap.Keys.ToHashSet();
+        clientToPeerMap.Keys.ToHashSet();
 
-    public LiteNetLibServer()
+    internal LiteNetLibServer()
     {
-        _peerToClientMap = new ConcurrentDictionary<int, ClientId>();
-        _clientToPeerMap = new ConcurrentDictionary<ClientId, NetPeer>();
-        _eventHandlers = new ConcurrentBag<NetworkEventHandler>();
+        peerToClientMap = new ConcurrentDictionary<int, ClientId>();
+        clientToPeerMap = new ConcurrentDictionary<ClientId, NetPeer>();
+        eventHandlers = new ConcurrentBag<NetworkEventHandler>();
     }
 
     public async Task StartAsync(int port)
     {
+        const int networkTick = 15;
+        const int pingInterval = 1000;
         await Task.Run(() =>
         {
-            lock (_lockObject)
+            lock (lockObject)
             {
-                if (_isRunning)
+                if (isRunning)
                     throw new InvalidOperationException("Server is already running");
-
-                _server = new NetManager(this)
+                server = new NetManager(this)
                 {
                     BroadcastReceiveEnabled = true,
                     UnconnectedMessagesEnabled = true,
-                    UpdateTime = 15,
-                    PingInterval = 1000
+                    UpdateTime = networkTick,
+                    PingInterval = pingInterval
                 };
 
-                bool started = _server.Start(port);
+                var started = server.Start(port);
                 if (!started)
                     throw new InvalidOperationException($"Failed to start server on port {port}");
 
-                _isRunning = true;
+                isRunning = true;
 
                 // Start polling task
                 _ = Task.Run(async () =>
                 {
-                    while (_isRunning)
+                    while (isRunning)
                     {
-                        _server.PollEvents();
-                        await Task.Delay(15);
+                        server.PollEvents();
+                        await Task.Delay(networkTick);
                     }
                 });
             }
@@ -67,15 +68,15 @@ public class LiteNetLibServer : NetworkServer, INetEventListener
     {
         await Task.Run(() =>
         {
-            lock (_lockObject)
+            lock (lockObject)
             {
-                if (!_isRunning)
+                if (!isRunning)
                     return;
 
-                _isRunning = false;
+                isRunning = false;
 
                 // Disconnect all clients with ServerShutdown reason
-                foreach (var kvp in _clientToPeerMap.ToArray())
+                foreach (var kvp in clientToPeerMap.ToArray())
                 {
                     var clientId = kvp.Key;
                     var peer = kvp.Value;
@@ -91,9 +92,9 @@ public class LiteNetLibServer : NetworkServer, INetEventListener
                     NotifyEventHandlers(handler => handler.OnClientDisconnected(shutdownEvent));
                 }
 
-                _peerToClientMap.Clear();
-                _clientToPeerMap.Clear();
-                _server?.Stop();
+                peerToClientMap.Clear();
+                clientToPeerMap.Clear();
+                server?.Stop();
             }
         });
     }
@@ -102,7 +103,7 @@ public class LiteNetLibServer : NetworkServer, INetEventListener
     {
         await Task.Run(() =>
         {
-            if (_clientToPeerMap.TryGetValue(clientId, out NetPeer peer))
+            if (clientToPeerMap.TryGetValue(clientId, out NetPeer peer))
             {
                 if (peer.ConnectionState == ConnectionState.Connected)
                 {
@@ -116,7 +117,7 @@ public class LiteNetLibServer : NetworkServer, INetEventListener
     {
         await Task.Run(() =>
         {
-            foreach (var peer in _clientToPeerMap.Values)
+            foreach (var peer in clientToPeerMap.Values)
             {
                 if (peer.ConnectionState == ConnectionState.Connected)
                 {
@@ -130,7 +131,7 @@ public class LiteNetLibServer : NetworkServer, INetEventListener
     {
         await Task.Run(() =>
         {
-            if (_clientToPeerMap.TryGetValue(clientId, out NetPeer peer))
+            if (clientToPeerMap.TryGetValue(clientId, out NetPeer peer))
             {
                 peer.Disconnect();
                 // The disconnect event will be triggered by OnPeerDisconnected
@@ -142,7 +143,7 @@ public class LiteNetLibServer : NetworkServer, INetEventListener
     {
         if (handler != null)
         {
-            _eventHandlers.Add(handler);
+            eventHandlers.Add(handler);
         }
     }
 
@@ -159,8 +160,8 @@ public class LiteNetLibServer : NetworkServer, INetEventListener
     {
         var clientId = new ClientId(Guid.NewGuid().ToString());
         
-        _peerToClientMap.TryAdd(peer.Id, clientId);
-        _clientToPeerMap.TryAdd(clientId, peer);
+        peerToClientMap.TryAdd(peer.Id, clientId);
+        clientToPeerMap.TryAdd(clientId, peer);
 
         var connectEvent = new ClientConnectedEvent(
             clientId, 
@@ -173,9 +174,9 @@ public class LiteNetLibServer : NetworkServer, INetEventListener
 
     public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
     {
-        if (_peerToClientMap.TryRemove(peer.Id, out var clientId))
+        if (peerToClientMap.TryRemove(peer.Id, out var clientId))
         {
-            _clientToPeerMap.TryRemove(clientId, out _);
+            clientToPeerMap.TryRemove(clientId, out _);
 
             var reason = MapLiteNetDisconnectReason(disconnectInfo.Reason);
             var disconnectEvent = new ClientDisconnectedEvent(
@@ -192,7 +193,7 @@ public class LiteNetLibServer : NetworkServer, INetEventListener
     {
         try
         {
-            if (_peerToClientMap.TryGetValue(peer.Id, out var clientId))
+            if (peerToClientMap.TryGetValue(peer.Id, out var clientId))
             {
                 byte[] data = reader.GetRemainingBytes();
                 var message = new NetworkMessage(data, clientId, DateTime.UtcNow);
@@ -245,7 +246,7 @@ public class LiteNetLibServer : NetworkServer, INetEventListener
 
     private void NotifyEventHandlers(Action<NetworkEventHandler> action)
     {
-        foreach (var handler in _eventHandlers)
+        foreach (var handler in eventHandlers)
         {
             try
             {

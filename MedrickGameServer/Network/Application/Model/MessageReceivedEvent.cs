@@ -1,6 +1,6 @@
 ﻿namespace MedrickGameServer.Network.Application;
 
-public sealed class MessageReceivedEvent
+public readonly struct MessageReceivedEvent
 {
     public NetworkMessage Message { get; }
     

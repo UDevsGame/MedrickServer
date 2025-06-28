@@ -1,6 +1,6 @@
 ﻿namespace MedrickGameServer.Network.Application;
 
-public class ClientId
+public readonly struct ClientId
 {
     public string Value { get; }
     

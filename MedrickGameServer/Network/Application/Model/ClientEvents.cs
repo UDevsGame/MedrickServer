@@ -1,15 +1,6 @@
 ﻿namespace MedrickGameServer.Network.Application;
 
-public enum DisconnectedReason
-{
-    UserRequested,
-    Timeout,
-    ConnectionLost,
-    ServerShutdown,
-    Kicked
-}
-
-public sealed class ClientConnectedEvent
+public readonly struct ClientConnectedEvent
 {
     public ClientId ClientId { get; }
     public string EndPoint { get; }
@@ -23,7 +14,7 @@ public sealed class ClientConnectedEvent
     }
 }
 
-public sealed class ClientDisconnectedEvent
+public readonly struct ClientDisconnectedEvent
 {
     public ClientId ClientId { get; }
     public DisconnectedReason Reason { get; }
@@ -35,4 +26,14 @@ public sealed class ClientDisconnectedEvent
         Reason = reason;
         DisconnectedAt = disconnectedAt;
     }
+}
+
+[Flags]
+public enum DisconnectedReason : byte
+{
+    UserRequested = 1 << 0,  // 0x01
+    Timeout = 1 << 1,        // 0x02
+    ConnectionLost = 1 << 2, // 0x04
+    ServerShutdown = 1 << 3, // 0x08
+    Kicked = 1 << 4          // 0x10
 }
