@@ -18,12 +18,17 @@ public class LiteNetLibServer : NetworkServer, INetEventListener
     public bool IsRunning => serverLifecycle.IsRunning;
     public IReadOnlySet<ClientId> ConnectedClients => clientRepository.GetConnectedClients();
 
-    internal LiteNetLibServer()
+    private LiteNetLibServer()
     {
         clientRepository = new ClientRepository();
         eventDispatcher = new EventDispatcher();
         messageProcessor = new MessageProcessor(clientRepository, eventDispatcher);
         serverLifecycle = new ServerLifecycle(this, clientRepository, eventDispatcher);
+    }
+
+    internal static LiteNetLibServer CreateInstance()
+    {
+        return new LiteNetLibServer();
     }
 
     public async Task StartAsync(int port) => 

@@ -7,8 +7,7 @@ class Program
 {
     static async Task Main(string[] args)
     {
-        NetworkFactory networkFactory = new LiteNetLibFactory();
-        NetworkServer networkServer = networkFactory.CreateServer();
+        NetworkServer networkServer = LiteNetLibServer.CreateInstance();
         await networkServer.StartAsync(9050);
     }
 }
