@@ -45,7 +45,7 @@ jobs:
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/master'
     steps:
       # 6. دیپلوی با SSH username/password
       - name: Deploy to VPS over SSH
