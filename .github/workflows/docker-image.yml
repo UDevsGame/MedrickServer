@@ -66,6 +66,6 @@ jobs:
             docker run -d \
               --name medrick-server \
               --restart unless-stopped \
-              -p 9050:9050 \
+              -p 9051:9051 \
               -p 9050:9050/udp \
               udevsgame/medrick:latest
