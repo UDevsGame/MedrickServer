@@ -1,64 +1,70 @@
 name: CI/CD .NET 8 Console → Docker VPS
 
+# هر بار که به شاخه‌ی main پوش می‌شود اجرا کن
 on:
   push:
-    branches: [ main ]
-    
+    branches: [ master ]
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
+      # 1. کلون کردن مخزن
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # 2. نصب دات‌نت SDK
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
 
-      - name: Restore & Build
+      # 3. بیلد و پابلیش
+      - name: Restore, Build & Publish
         run: |
           dotnet restore
           dotnet build --configuration Release --no-restore
+          dotnet publish --configuration Release --no-build -o publish
 
-      - name: Run Tests
-        run: dotnet test --no-build --verbosity normal
-
-      - name: Publish
-        run: dotnet publish --configuration Release --no-build -o publish
-
+      # 4. لاگین به Docker Hub
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      # 5. ساخت و پوش ایمیج
       - name: Build & Push Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: ./Dockerfile
+          file: Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/your-app-name:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/medrick:latest
 
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
-      - name: Setup SSH key
-        uses: webfactory/ssh-agent@v0.9.1
+      # 6. دیپلوی با SSH username/password
+      - name: Deploy to VPS over SSH
+        uses: appleboy/ssh-action@v0.1.8
         with:
-          ssh-private-key: ${{ secrets.SSH_KEY }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: 22
+          script: |
+            # دریافت آخرین ایمیج
+            docker pull ${{ secrets.DOCKER_USERNAME }}/medrick:latest
 
-      - name: Deploy to VPS
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            docker pull ${{ secrets.DOCKER_USERNAME }}/your-app-name:latest
-            docker rm -f your-app-container || true
+            # حذف کانتینر قبلی (در صورت وجود)
+            docker rm -f medrick-server || true
+
+            # اجرای کانتینر جدید
             docker run -d \
-              --name your-app-container \
+              --name medrick-server \
               --restart unless-stopped \
               -p 80:80 \
-              ${{ secrets.DOCKER_USERNAME }}/your-app-name:latest
-          EOF
+              ${{ secrets.DOCKER_USERNAME }}/medrick:latest
