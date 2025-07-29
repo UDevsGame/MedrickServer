@@ -2,6 +2,7 @@
 using System.Text.Json;
 using MedrickGameServer.Network.Application;
 using MedrickGameServer.Network.Main.LiteNetLib;
+using Prometheus;
 
 namespace MedrickGameServer;
 
@@ -9,6 +10,16 @@ class Program : NetworkEventHandler
 {
     private static NetworkServer networkServer;
     private static readonly CancellationTokenSource cancellationTokenSource = new();
+    private static MetricServer metricServer;
+
+    private static readonly Counter ClientConnectedCounter = Metrics.CreateCounter(
+        "game_server_client_connected_total", "Total number of clients that have connected");
+    private static readonly Counter ClientDisconnectedCounter = Metrics.CreateCounter(
+        "game_server_client_disconnected_total", "Total number of clients that have disconnected");
+    private static readonly Counter MessagesReceivedCounter = Metrics.CreateCounter(
+        "game_server_messages_received_total", "Total number of messages received");
+    private static readonly Gauge ConnectedClientsGauge = Metrics.CreateGauge(
+        "game_server_connected_clients", "Current number of connected clients");
     
     static async Task Main(string[] args)
     {
@@ -22,6 +33,9 @@ class Program : NetworkEventHandler
         Program program = new Program();
         networkServer = LiteNetLibServer.CreateInstance();
         networkServer.Subscribe(program);
+
+        metricServer = new MetricServer(port: 9100);
+        metricServer.Start();
         
         try
         {
@@ -44,6 +58,7 @@ class Program : NetworkEventHandler
         finally
         {
             // cleanup کردن منابع
+            await metricServer.StopAsync();
             Console.WriteLine("Server stopped.");
         }
     }
@@ -51,17 +66,22 @@ class Program : NetworkEventHandler
     public async void OnClientConnected(ClientConnectedEvent eventArgs)
     {
         Console.WriteLine($"Client Connected - ID: {eventArgs.ClientId}, EndPoint: {eventArgs.EndPoint}, Time: {eventArgs.ConnectedAt}");
+        ClientConnectedCounter.Inc();
+        ConnectedClientsGauge.Inc();
         await networkServer.SendToClientAsync(eventArgs.ClientId, Encoding.UTF8.GetBytes(JsonSerializer.Serialize(eventArgs.ClientId)));
     }
 
     public void OnClientDisconnected(ClientDisconnectedEvent eventArgs)
     {
         Console.WriteLine($"Client Disconnected - ID: {eventArgs.ClientId}, Reason: {eventArgs.Reason}, Time: {eventArgs.DisconnectedAt}");
+        ClientDisconnectedCounter.Inc();
+        ConnectedClientsGauge.Dec();
     }
 
     public async void OnMessageReceived(MessageReceivedEvent eventArgs)
     {
         Console.WriteLine($"Message Received - From: {eventArgs.Message.SenderId}, Time: {eventArgs.Message.Timestamp}, Data: {Encoding.UTF8.GetString(eventArgs.Message.Data)}");
+        MessagesReceivedCounter.Inc();
         await networkServer.SendToAllClientsAsync(Encoding.UTF8.GetBytes(System.Text.Json.JsonSerializer.Serialize(eventArgs.Message)));
     }
 }
