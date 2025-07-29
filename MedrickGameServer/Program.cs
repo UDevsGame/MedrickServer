@@ -2,12 +2,14 @@
 using System.Text.Json;
 using MedrickGameServer.Network.Application;
 using MedrickGameServer.Network.Main.LiteNetLib;
+using MedrickGameServer.Monitoring;
 
 namespace MedrickGameServer;
 
 class Program : NetworkEventHandler
 {
     private static NetworkServer networkServer;
+    private static MonitoringService? monitoringService;
     private static readonly CancellationTokenSource cancellationTokenSource = new();
     
     static async Task Main(string[] args)
@@ -29,7 +31,10 @@ class Program : NetworkEventHandler
             await networkServer.StartAsync(9050);
             Console.WriteLine("Server is running on port: 9050");
             Console.WriteLine("Press Ctrl+C to stop the server...");
-            
+
+            monitoringService = new MonitoringService(networkServer);
+            monitoringService.Start();
+
             // نگه داشتن برنامه تا زمان دریافت signal برای توقف
             await Task.Delay(-1, cancellationTokenSource.Token);
         }
@@ -44,6 +49,7 @@ class Program : NetworkEventHandler
         finally
         {
             // cleanup کردن منابع
+            monitoringService?.Dispose();
             Console.WriteLine("Server stopped.");
         }
     }
